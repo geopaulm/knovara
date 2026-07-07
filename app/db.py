@@ -4,6 +4,8 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
+from app.models import Base
+
 
 def make_engine(database_url: str) -> Engine:
     kwargs = {"connect_args": {"check_same_thread": False}} if database_url.startswith("sqlite") else {}
@@ -17,6 +19,13 @@ def make_session_factory(engine: Engine) -> sessionmaker[Session]:
 def get_db(session_factory: sessionmaker[Session]) -> Iterator[Session]:
     with session_factory() as session:
         yield session
+
+
+def init_db(engine: Engine) -> None:
+    with engine.begin() as connection:
+        if engine.dialect.name == "postgresql":
+            connection.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+        Base.metadata.create_all(connection)
 
 
 def ping_db(session: Session) -> None:

@@ -24,6 +24,8 @@ Expected response:
 {"status":"ok","database":"ok"}
 ```
 
+On startup, the app initializes the MVP database schema and enables pgvector when using PostgreSQL.
+
 ## Development
 
 Create `.env` from `.env.example` only when you need to override local defaults.
