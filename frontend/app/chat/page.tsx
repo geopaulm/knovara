@@ -13,9 +13,19 @@ type Document = {
 type Message = {
   id: number;
   question: string;
+  answer: string;
+  noAnswer: boolean;
 };
 
 const maxQuestionLength = 1000;
+const fallbackAnswer = "Not enough information in the uploaded documents.";
+const noAnswerMessage =
+  "The uploaded documents do not contain enough information to answer this question.";
+
+type ChatResponse = {
+  answer: string;
+  sources: unknown[];
+};
 
 function friendlyError(error: unknown) {
   return error instanceof TypeError
@@ -29,7 +39,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [error, setError] = useState("");
   const [loadingDocuments, setLoadingDocuments] = useState(true);
-  const [answerLoading] = useState(false);
+  const [answerLoading, setAnswerLoading] = useState(false);
 
   useEffect(() => {
     async function loadDocuments() {
@@ -49,12 +59,12 @@ export default function ChatPage() {
   const trimmedQuestion = question.trim();
   const questionTooLong = question.length > maxQuestionLength;
   const canAsk =
-    question.length > 0 &&
+    trimmedQuestion.length > 0 &&
     !questionTooLong &&
     !answerLoading &&
     readyDocuments.length > 0;
 
-  function askQuestion(event: FormEvent<HTMLFormElement>) {
+  async function askQuestion(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!trimmedQuestion) {
@@ -72,12 +82,36 @@ export default function ChatPage() {
       return;
     }
 
-    setMessages((current) => [
-      ...current,
-      { id: Date.now(), question: trimmedQuestion },
-    ]);
-    setQuestion("");
     setError("");
+    setAnswerLoading(true);
+
+    try {
+      const response = await apiFetch<ChatResponse>("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: trimmedQuestion }),
+      });
+      const noAnswer =
+        response.answer === fallbackAnswer || response.sources.length === 0;
+      setMessages((current) => [
+        ...current,
+        {
+          id: Date.now(),
+          question: trimmedQuestion,
+          answer: noAnswer ? noAnswerMessage : response.answer,
+          noAnswer,
+        },
+      ]);
+      setQuestion("");
+    } catch (err) {
+      setError(
+        err instanceof TypeError
+          ? friendlyError(err)
+          : "DocuMind could not generate an answer. Please try again.",
+      );
+    } finally {
+      setAnswerLoading(false);
+    }
   }
 
   return (
@@ -133,6 +167,12 @@ export default function ChatPage() {
           <button type="submit" className="button button-primary" disabled={!canAsk}>
             {answerLoading ? "Asking..." : "Ask DocuMind"}
           </button>
+          {answerLoading ? (
+            <div className="loading-row">
+              <span className="spinner" aria-hidden="true" />
+              <span>Generating answer</span>
+            </div>
+          ) : null}
         </form>
 
         <aside className="space-y-3" aria-label="Chat history">
@@ -147,9 +187,14 @@ export default function ChatPage() {
                 <p className="text-sm leading-6 text-slate-900">
                   {message.question}
                 </p>
-                <span className="badge badge-loading">
-                  Answer API connects next
-                </span>
+                <p className="text-sm font-medium text-slate-500">DocuMind answered</p>
+                <p
+                  className={`text-sm leading-6 ${
+                    message.noAnswer ? "text-amber-800" : "text-slate-900"
+                  }`}
+                >
+                  {message.answer}
+                </p>
               </div>
             ))
           )}
