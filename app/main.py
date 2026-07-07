@@ -125,7 +125,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
         question = chat_request.question.strip()
         if not question:
             raise HTTPException(status_code=400, detail="Question is required")
-        return {"answer": answer_question(session, question, request.app.state.ai_service)}
+        return answer_question(session, question, request.app.state.ai_service)
 
     return app
 

@@ -33,7 +33,16 @@ def test_chat_answers_from_retrieved_context(tmp_path):
         response = client.post("/api/chat", json={"question": "What does alpha say?"})
 
     assert response.status_code == 200
-    assert response.json() == {"answer": "Alpha handbook text."}
+    assert response.json() == {
+        "answer": "Alpha handbook text.",
+        "sources": [
+            {
+                "document_name": "handbook.pdf",
+                "page_number": 1,
+                "excerpt": "Alpha handbook text.",
+            }
+        ],
+    }
 
 
 def test_chat_falls_back_without_context(tmp_path):
@@ -49,4 +58,7 @@ def test_chat_falls_back_without_context(tmp_path):
         response = client.post("/api/chat", json={"question": "Anything?"})
 
     assert response.status_code == 200
-    assert response.json() == {"answer": "Not enough information in the uploaded documents."}
+    assert response.json() == {
+        "answer": "Not enough information in the uploaded documents.",
+        "sources": [],
+    }

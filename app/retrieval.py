@@ -47,9 +47,20 @@ def build_prompt(question: str, chunks: list[DocumentChunk]) -> str:
     )
 
 
-def answer_question(session: Session, question: str, ai_service: AIService) -> str:
+def source_response(chunk: DocumentChunk) -> dict:
+    return {
+        "document_name": chunk.document.filename,
+        "page_number": chunk.page_number,
+        "excerpt": chunk.text,
+    }
+
+
+def answer_question(session: Session, question: str, ai_service: AIService) -> dict:
     question_embedding = ai_service.embed([question])[0]
     chunks = retrieve_chunks(session, question_embedding)
     if not chunks:
-        return FALLBACK_ANSWER
-    return ai_service.answer(build_prompt(question, chunks))
+        return {"answer": FALLBACK_ANSWER, "sources": []}
+    return {
+        "answer": ai_service.answer(build_prompt(question, chunks)),
+        "sources": [source_response(chunk) for chunk in chunks],
+    }
