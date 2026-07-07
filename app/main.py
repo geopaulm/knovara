@@ -7,6 +7,7 @@ from uuid import uuid4
 
 import httpx
 from fastapi import Depends, FastAPI, File, HTTPException, Request, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -46,6 +47,12 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
         yield
 
     app = FastAPI(title="DocuMind", lifespan=lifespan)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=list(settings.cors_origins),
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     app.state.SessionLocal = make_session_factory(engine)
     app.state.ai_service = OpenAIEmbeddingService(settings)
 

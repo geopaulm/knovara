@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+import logging
+
 from pypdf import PdfReader
 from sqlalchemy.orm import Session
 
 from app.ai import AIService
 from app.models import Document, DocumentChunk, DocumentStatus
 from app.models import ChunkEmbedding
+
+logger = logging.getLogger(__name__)
 
 
 def extract_pdf_text(path: str) -> list[tuple[int | None, str]]:
@@ -52,6 +56,7 @@ def process_document(session: Session, document: Document, ai_service: AIService
         document.chunks = chunks
         document.status = DocumentStatus.READY
     except Exception:
+        logger.exception("Document processing failed for document_id=%s filename=%s", document.id, document.filename)
         document.chunks = []
         document.status = DocumentStatus.FAILED
     session.commit()

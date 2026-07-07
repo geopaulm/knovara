@@ -66,10 +66,26 @@ npm install
 npm run dev
 ```
 
+Open `http://localhost:3000`.
+
+For the full demo workflow, keep the backend running in another terminal:
+
+```sh
+docker compose up --build
+```
+
 Set `NEXT_PUBLIC_API_BASE_URL` when the API is not running at `http://localhost:8000`:
 
 ```sh
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000 npm run dev
+```
+
+Frontend checks:
+
+```sh
+cd frontend
+npm run typecheck
+npm run build
 ```
 
 ## API Usage

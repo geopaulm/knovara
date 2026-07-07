@@ -32,7 +32,7 @@ const noAnswerMessage =
 
 type ChatResponse = {
   answer: string;
-  sources: Source[];
+  sources?: Source[];
 };
 
 function friendlyError(error: unknown) {
@@ -99,8 +99,8 @@ export default function ChatPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: trimmedQuestion }),
       });
-      const noAnswer =
-        response.answer === fallbackAnswer || response.sources.length === 0;
+      const sources = response.sources ?? [];
+      const noAnswer = response.answer === fallbackAnswer || sources.length === 0;
       setMessages((current) => [
         ...current,
         {
@@ -108,7 +108,7 @@ export default function ChatPage() {
           question: trimmedQuestion,
           answer: noAnswer ? noAnswerMessage : response.answer,
           noAnswer,
-          sources: response.sources,
+          sources,
         },
       ]);
       setQuestion("");
