@@ -15,16 +15,24 @@ type Message = {
   question: string;
   answer: string;
   noAnswer: boolean;
+  sources: Source[];
+};
+
+type Source = {
+  document_name: string;
+  page_number?: number | null;
+  excerpt: string;
 };
 
 const maxQuestionLength = 1000;
+const excerptPreviewLength = 220;
 const fallbackAnswer = "Not enough information in the uploaded documents.";
 const noAnswerMessage =
   "The uploaded documents do not contain enough information to answer this question.";
 
 type ChatResponse = {
   answer: string;
-  sources: unknown[];
+  sources: Source[];
 };
 
 function friendlyError(error: unknown) {
@@ -100,6 +108,7 @@ export default function ChatPage() {
           question: trimmedQuestion,
           answer: noAnswer ? noAnswerMessage : response.answer,
           noAnswer,
+          sources: response.sources,
         },
       ]);
       setQuestion("");
@@ -137,7 +146,7 @@ export default function ChatPage() {
         </div>
       ) : null}
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_18rem]">
+      <div className="grid gap-4 lg:grid-cols-[18rem_1fr]">
         <form className="panel space-y-4" onSubmit={askQuestion}>
           <div className="field">
             <label htmlFor="question" className="label">
@@ -175,7 +184,7 @@ export default function ChatPage() {
           ) : null}
         </form>
 
-        <aside className="space-y-3" aria-label="Chat history">
+        <aside className="min-w-0 space-y-3" aria-label="Chat history">
           {messages.length === 0 ? (
             <div className="empty-state">
               Answers will appear here after you ask a question.
@@ -195,6 +204,54 @@ export default function ChatPage() {
                 >
                   {message.answer}
                 </p>
+                <div className="space-y-2 border-t border-slate-200 pt-3">
+                  <p className="text-sm font-medium text-slate-500">Sources</p>
+                  {message.sources.length === 0 ? (
+                    <p className="text-sm text-slate-600">
+                      No source citations returned.
+                    </p>
+                  ) : (
+                    message.sources.map((source, index) => {
+                      const isLong = source.excerpt.length > excerptPreviewLength;
+                      const preview = `${source.excerpt.slice(0, excerptPreviewLength)}...`;
+
+                      return (
+                        <div
+                          key={`${source.document_name}-${source.page_number ?? "unknown"}-${index}`}
+                          className="rounded-md border border-slate-200 bg-slate-50 p-3"
+                        >
+                          <p className="text-sm font-medium text-slate-900">
+                            {source.document_name}
+                          </p>
+                          <p className="mt-1 text-xs text-slate-500">
+                            {source.page_number
+                              ? `Page ${source.page_number}`
+                              : "Page unavailable"}
+                          </p>
+                          {isLong ? (
+                            <>
+                              <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-slate-700">
+                                {preview}
+                              </p>
+                              <details className="mt-2 text-sm leading-6 text-slate-700">
+                                <summary className="cursor-pointer font-medium text-teal-700">
+                                  Show full excerpt
+                                </summary>
+                                <p className="mt-2 whitespace-pre-wrap break-words">
+                                  {source.excerpt}
+                                </p>
+                              </details>
+                            </>
+                          ) : (
+                            <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-slate-700">
+                              {source.excerpt}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               </div>
             ))
           )}
