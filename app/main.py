@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from app.config import Settings, get_settings
 from app.db import get_db, init_db, make_engine, make_session_factory, ping_db
 from app.models import Document
+from app.processing import process_document
 
 
 def document_response(document: Document) -> dict:
@@ -79,6 +80,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
         session.add(document)
         session.commit()
         session.refresh(document)
+        process_document(session, document)
         return document_response(document)
 
     @app.get("/api/documents")
