@@ -1,0 +1,206 @@
+# DocuMind — MVP Requirements
+
+## 1. Overview
+
+DocuMind is a simple AI-powered knowledge assistant that allows users to upload documents and ask questions about their content.
+
+The application uses Retrieval-Augmented Generation (RAG) to retrieve relevant information from uploaded documents and generate answers based only on that information.
+
+Answers should include references to the source documents used.
+
+## 2. Goals
+
+The MVP should allow a user to:
+
+* Upload documents
+* Process and index document content
+* Ask natural-language questions
+* Receive AI-generated answers based on uploaded documents
+* View the sources used to generate each answer
+
+## 3. Functional Requirements
+
+### 3.1 Document Upload
+
+The user should be able to upload a document.
+
+For the MVP, the following file type must be supported:
+
+* PDF
+
+The system should:
+
+1. Validate the uploaded file
+2. Store the document
+3. Extract text from the document
+4. Split the extracted text into smaller chunks
+5. Generate an embedding for each chunk
+6. Store the chunks and embeddings in the database
+
+The user should be able to view the processing status of a document.
+
+Possible statuses:
+
+* Uploaded
+* Processing
+* Ready
+* Failed
+
+### 3.2 Document Management
+
+The user should be able to:
+
+* View uploaded documents
+* See the processing status of each document
+* Delete a document
+
+Deleting a document should also delete its associated chunks and embeddings.
+
+### 3.3 Ask Questions
+
+The user should be able to enter a natural-language question.
+
+When a question is submitted, the system should:
+
+1. Generate an embedding for the question
+2. Search for the most relevant document chunks
+3. Select the top matching chunks
+4. Send the retrieved context and question to the AI model
+5. Generate an answer based on the retrieved context
+
+The AI model should be instructed not to invent information that is not available in the retrieved context.
+
+If the documents do not contain enough information to answer the question, the application should clearly state this.
+
+### 3.4 Source Citations
+
+Each answer should display the sources used to generate it.
+
+A source should include:
+
+* Document name
+* Page number, where available
+* Relevant text excerpt
+
+The user should be able to expand a source to view the retrieved content.
+
+## 4. Technical Requirements
+
+### Backend
+
+* Python
+* FastAPI
+* SQLAlchemy
+
+### Database
+
+* PostgreSQL
+* pgvector
+
+The database should store:
+
+* Document metadata
+* Document chunks
+* Vector embeddings
+
+### AI
+
+An AI API should be used for:
+
+* Generating embeddings
+* Generating answers
+
+The AI provider should be accessed through a dedicated service layer so that it can be replaced in the future.
+
+### Document Processing
+
+PDF text should be extracted using a Python PDF library.
+
+Documents should be split into chunks before embeddings are generated.
+
+Each chunk should retain metadata including:
+
+* Document ID
+* Document name
+* Page number
+* Chunk position
+
+## 5. API Requirements
+
+The backend should provide endpoints for:
+
+* Uploading a document
+* Listing documents
+* Getting document details
+* Deleting a document
+* Asking a question
+
+Example API structure:
+
+`POST /api/documents`
+
+`GET /api/documents`
+
+`GET /api/documents/{id}`
+
+`DELETE /api/documents/{id}`
+
+`POST /api/chat`
+
+## 6. Non-Functional Requirements
+
+The application should:
+
+* Run locally using Docker
+* Store configuration in environment variables
+* Never commit API keys or secrets to source control
+* Include an `.env.example` file
+* Include basic error handling
+* Include API health checks
+* Include automated tests for core functionality
+* Provide clear setup instructions in the README
+
+## 7. Out of Scope for MVP
+
+The following features are not required for the initial version:
+
+* User authentication
+* Multiple organisations or tenants
+* Conversation memory
+* OCR for scanned documents
+* Image understanding
+* Streaming responses
+* Advanced reranking
+* Multiple AI providers
+* Large-scale background processing
+* Cloud deployment
+
+These features may be added in future versions.
+
+## 8. MVP Success Criteria
+
+The MVP is complete when a user can:
+
+1. Start the application locally
+2. Upload a PDF document
+3. Wait for the document to be processed
+4. Ask a question about the document
+5. Receive a relevant answer
+6. See which document content was used to generate the answer
+
+## 9. Future Enhancements
+
+Possible future improvements include:
+
+* User authentication
+* Multiple knowledge bases
+* DOCX and Markdown support
+* OCR for scanned PDFs
+* Conversation history
+* Streaming AI responses
+* Hybrid keyword and vector search
+* Reranking
+* AWS deployment
+* S3 document storage
+* Background processing with a message queue
+* Usage and cost monitoring
