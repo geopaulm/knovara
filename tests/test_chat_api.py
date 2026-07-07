@@ -62,3 +62,18 @@ def test_chat_falls_back_without_context(tmp_path):
         "answer": "Not enough information in the uploaded documents.",
         "sources": [],
     }
+
+
+def test_chat_reports_ai_service_errors(tmp_path):
+    app = create_app(
+        Settings(
+            database_url=f"sqlite:///{tmp_path / 'test.db'}",
+            document_storage_dir=str(tmp_path / "documents"),
+        )
+    )
+
+    with TestClient(app) as client:
+        response = client.post("/api/chat", json={"question": "Anything?"})
+
+    assert response.status_code == 503
+    assert response.json()["detail"] == "AI service unavailable"
