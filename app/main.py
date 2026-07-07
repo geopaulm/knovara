@@ -10,6 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from app.ai import OpenAIEmbeddingService
 from app.config import Settings, get_settings
 from app.db import get_db, init_db, make_engine, make_session_factory, ping_db
 from app.models import Document
@@ -39,6 +40,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
 
     app = FastAPI(title="DocuMind", lifespan=lifespan)
     app.state.SessionLocal = make_session_factory(engine)
+    app.state.ai_service = OpenAIEmbeddingService(settings)
 
     def db_session(request: Request):
         yield from get_db(request.app.state.SessionLocal)
@@ -53,6 +55,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
 
     @app.post("/api/documents", status_code=201)
     def upload_document(
+        request: Request,
         session: Annotated[Session, Depends(db_session)],
         file: UploadFile = File(...),
     ):
@@ -80,7 +83,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
         session.add(document)
         session.commit()
         session.refresh(document)
-        process_document(session, document)
+        process_document(session, document, request.app.state.ai_service)
         return document_response(document)
 
     @app.get("/api/documents")

@@ -12,6 +12,11 @@ from pdf_helpers import pdf_with_text
 PDF_WITH_TEXT = pdf_with_text("Alpha handbook text.")
 
 
+class FakeAIService:
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        return [[float(index), 0.5] for index, _ in enumerate(texts)]
+
+
 def test_document_upload_list_get_delete(tmp_path):
     app = create_app(
         Settings(
@@ -19,6 +24,7 @@ def test_document_upload_list_get_delete(tmp_path):
             document_storage_dir=str(tmp_path / "documents"),
         )
     )
+    app.state.ai_service = FakeAIService()
 
     with TestClient(app) as client:
         bad = client.post(
@@ -46,6 +52,7 @@ def test_document_upload_list_get_delete(tmp_path):
             assert saved.chunks[0].page_number == 1
             assert saved.chunks[0].position == 0
             assert saved.chunks[0].text == "Alpha handbook text."
+            assert saved.chunks[0].embedding.embedding == [0.0, 0.5]
 
         listed = client.get("/api/documents")
         assert listed.status_code == 200

@@ -3,7 +3,9 @@ from __future__ import annotations
 from pypdf import PdfReader
 from sqlalchemy.orm import Session
 
+from app.ai import AIService
 from app.models import Document, DocumentChunk, DocumentStatus
+from app.models import ChunkEmbedding
 
 
 def extract_pdf_text(path: str) -> list[tuple[int | None, str]]:
@@ -34,7 +36,7 @@ def chunk_pages(pages: list[tuple[int | None, str]], max_chars: int = 1000) -> l
     return chunks
 
 
-def process_document(session: Session, document: Document) -> None:
+def process_document(session: Session, document: Document, ai_service: AIService) -> None:
     document.status = DocumentStatus.PROCESSING
     session.commit()
 
@@ -42,6 +44,11 @@ def process_document(session: Session, document: Document) -> None:
         chunks = chunk_pages(extract_pdf_text(document.storage_path))
         if not chunks:
             raise ValueError("no extractable text")
+        embeddings = ai_service.embed([chunk.text for chunk in chunks])
+        if len(embeddings) != len(chunks):
+            raise ValueError("embedding count mismatch")
+        for chunk, embedding in zip(chunks, embeddings):
+            chunk.embedding = ChunkEmbedding(embedding=embedding)
         document.chunks = chunks
         document.status = DocumentStatus.READY
     except Exception:
