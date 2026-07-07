@@ -6,6 +6,7 @@ from typing import Optional
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI, File, HTTPException, Request, UploadFile
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -15,6 +16,11 @@ from app.config import Settings, get_settings
 from app.db import get_db, init_db, make_engine, make_session_factory, ping_db
 from app.models import Document
 from app.processing import process_document
+from app.retrieval import answer_question
+
+
+class ChatRequest(BaseModel):
+    question: str
 
 
 def document_response(document: Document) -> dict:
@@ -109,6 +115,17 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
         session.commit()
         storage_path.unlink(missing_ok=True)
         return None
+
+    @app.post("/api/chat")
+    def chat(
+        request: Request,
+        chat_request: ChatRequest,
+        session: Annotated[Session, Depends(db_session)],
+    ):
+        question = chat_request.question.strip()
+        if not question:
+            raise HTTPException(status_code=400, detail="Question is required")
+        return {"answer": answer_question(session, question, request.app.state.ai_service)}
 
     return app
 

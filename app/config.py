@@ -6,6 +6,7 @@ DEFAULT_DATABASE_URL = "postgresql+psycopg://documind:documind@localhost:5432/do
 DEFAULT_DOCUMENT_STORAGE_DIR = "storage/documents"
 DEFAULT_AI_BASE_URL = "https://api.openai.com/v1"
 DEFAULT_AI_EMBEDDING_MODEL = "text-embedding-3-small"
+DEFAULT_AI_CHAT_MODEL = "gpt-4o-mini"
 
 
 @dataclass(frozen=True)
@@ -15,6 +16,7 @@ class Settings:
     ai_api_key: str = ""
     ai_base_url: str = DEFAULT_AI_BASE_URL
     ai_embedding_model: str = DEFAULT_AI_EMBEDDING_MODEL
+    ai_chat_model: str = DEFAULT_AI_CHAT_MODEL
 
 
 @lru_cache
@@ -25,4 +27,5 @@ def get_settings() -> Settings:
         ai_api_key=os.getenv("AI_API_KEY", ""),
         ai_base_url=os.getenv("AI_BASE_URL", DEFAULT_AI_BASE_URL),
         ai_embedding_model=os.getenv("AI_EMBEDDING_MODEL", DEFAULT_AI_EMBEDDING_MODEL),
+        ai_chat_model=os.getenv("AI_CHAT_MODEL", DEFAULT_AI_CHAT_MODEL),
     )
