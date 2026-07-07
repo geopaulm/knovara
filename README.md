@@ -56,6 +56,22 @@ Expected response:
 
 On startup, the app initializes the MVP database schema and enables pgvector when using PostgreSQL.
 
+## Frontend
+
+The Next.js frontend lives in `frontend/`.
+
+```sh
+cd frontend
+npm install
+npm run dev
+```
+
+Set `NEXT_PUBLIC_API_BASE_URL` when the API is not running at `http://localhost:8000`:
+
+```sh
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000 npm run dev
+```
+
 ## API Usage
 
 Upload a PDF:
