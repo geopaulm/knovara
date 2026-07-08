@@ -6,3 +6,4 @@ __pycache__/
 storage/
 frontend/.next/
 frontend/node_modules/
+plans/
