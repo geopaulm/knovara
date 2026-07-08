@@ -1,6 +1,6 @@
-# DocuMind
+# Knovara
 
-DocuMind is a minimal FastAPI RAG MVP: upload a PDF, index its text, ask a question, and get an answer with source citations.
+Knovara is a minimal FastAPI RAG MVP: upload a PDF, index its text, ask a question, and get an answer with source citations.
 
 ## Requirements
 
@@ -18,7 +18,7 @@ cp .env.example .env
 Set `AI_API_KEY` in `.env`. The other defaults work with Docker:
 
 ```sh
-DATABASE_URL=postgresql+psycopg://documind:documind@db:5432/documind
+DATABASE_URL=postgresql+psycopg://knovara:knovara@db:5432/knovara
 DOCUMENT_STORAGE_DIR=storage/documents
 AI_API_KEY=your_api_key_here
 AI_BASE_URL=https://api.openai.com/v1

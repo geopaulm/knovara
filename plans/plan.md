@@ -1,6 +1,6 @@
-# DocuMind MVP Plan
+# Knovara MVP Plan
 
-This plan breaks the DocuMind MVP into implementation milestones. Each milestone should leave the project in a working or verifiable state and build toward the success criteria in `requirements.txt`.
+This plan breaks the Knovara MVP into implementation milestones. Each milestone should leave the project in a working or verifiable state and build toward the success criteria in `requirements.txt`.
 
 ## Milestone 1: Project Foundation
 

@@ -1,6 +1,6 @@
-# DocuMind Frontend Plan
+# Knovara Frontend Plan
 
-This plan breaks the DocuMind frontend into implementation milestones. Each milestone should leave the UI in a working or demonstrable state and build toward the success criteria in `frontend_requirements.txt`.
+This plan breaks the Knovara frontend into implementation milestones. Each milestone should leave the UI in a working or demonstrable state and build toward the success criteria in `frontend_requirements.txt`.
 
 ## Milestone 1: Frontend Project Foundation
 
@@ -55,7 +55,7 @@ This plan breaks the DocuMind frontend into implementation milestones. Each mile
 
 ### Goals
 
-- Explain DocuMind quickly and provide clear paths into the product workflow.
+- Explain Knovara quickly and provide clear paths into the product workflow.
 - Make the first screen polished enough for portfolio screenshots.
 
 ### Deliverables
@@ -70,7 +70,7 @@ This plan breaks the DocuMind frontend into implementation milestones. Each mile
 
 ### Completion Criteria
 
-- A visitor understands what DocuMind does from the home page.
+- A visitor understands what Knovara does from the home page.
 - Primary and secondary buttons navigate to the correct pages.
 - Feature highlights are visible without making the page feel cluttered.
 

@@ -76,7 +76,7 @@ export default function ChatPage() {
     event.preventDefault();
 
     if (!trimmedQuestion) {
-      setError("Enter a question before asking DocuMind.");
+      setError("Enter a question before asking Knovara.");
       return;
     }
 
@@ -116,7 +116,7 @@ export default function ChatPage() {
       setError(
         err instanceof TypeError
           ? friendlyError(err)
-          : "DocuMind could not generate an answer. Please try again.",
+          : "Knovara could not generate an answer. Please try again.",
       );
     } finally {
       setAnswerLoading(false);
@@ -174,7 +174,7 @@ export default function ChatPage() {
             ) : null}
           </div>
           <button type="submit" className="button button-primary" disabled={!canAsk}>
-            {answerLoading ? "Asking..." : "Ask DocuMind"}
+            {answerLoading ? "Asking..." : "Ask Knovara"}
           </button>
           {answerLoading ? (
             <div className="loading-row">
@@ -196,7 +196,7 @@ export default function ChatPage() {
                 <p className="text-sm leading-6 text-slate-900">
                   {message.question}
                 </p>
-                <p className="text-sm font-medium text-slate-500">DocuMind answered</p>
+                <p className="text-sm font-medium text-slate-500">Knovara answered</p>
                 <p
                   className={`text-sm leading-6 ${
                     message.noAnswer ? "text-amber-800" : "text-slate-900"

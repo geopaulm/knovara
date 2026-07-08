@@ -3,7 +3,7 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DocuMind",
+  title: "Knovara",
   description: "Ask questions about uploaded PDFs.",
 };
 
@@ -28,7 +28,7 @@ export default function RootLayout({
               href="/"
               className="text-lg font-semibold tracking-tight focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-600"
             >
-              DocuMind
+              Knovara
             </Link>
             <div className="grid grid-cols-3 gap-2 text-sm sm:flex">
               {links.map((link) => (

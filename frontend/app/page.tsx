@@ -3,7 +3,7 @@ import Link from "next/link";
 const features = [
   {
     title: "Upload PDFs",
-    copy: "Add the documents you want DocuMind to search.",
+    copy: "Add the documents you want Knovara to search.",
   },
   {
     title: "Ask questions",
@@ -21,7 +21,7 @@ export default function HomePage() {
       <div className="grid gap-8 lg:grid-cols-[1fr_22rem] lg:items-center">
         <div className="page-header">
           <p className="eyebrow">PDF question answering</p>
-          <h1 className="page-title">DocuMind</h1>
+          <h1 className="page-title">Knovara</h1>
           <p className="page-copy">
             Upload PDFs, ask questions, and get concise answers backed by
             source citations.
@@ -36,7 +36,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="panel space-y-4" aria-label="DocuMind workflow preview">
+        <div className="panel space-y-4" aria-label="Knovara workflow preview">
           <div className="flex items-center justify-between gap-3">
             <span className="text-sm font-medium text-slate-700">
               contract.pdf

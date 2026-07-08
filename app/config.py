@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from functools import lru_cache
 
-DEFAULT_DATABASE_URL = "postgresql+psycopg://documind:documind@localhost:5432/documind"
+DEFAULT_DATABASE_URL = "postgresql+psycopg://knovara:knovara@localhost:5432/knovara"
 DEFAULT_DOCUMENT_STORAGE_DIR = "storage/documents"
 DEFAULT_AI_BASE_URL = "https://api.openai.com/v1"
 DEFAULT_AI_EMBEDDING_MODEL = "text-embedding-3-small"

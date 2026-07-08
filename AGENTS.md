@@ -1,4 +1,4 @@
-# DocuMind Coding Rules
+# Knovara Coding Rules
 
 Keep the code simple and production-minded.
 

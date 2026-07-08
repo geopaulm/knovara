@@ -2,15 +2,15 @@ services:
   db:
     image: pgvector/pgvector:pg16
     environment:
-      POSTGRES_USER: documind
-      POSTGRES_PASSWORD: documind
-      POSTGRES_DB: documind
+      POSTGRES_USER: knovara
+      POSTGRES_PASSWORD: knovara
+      POSTGRES_DB: knovara
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U documind -d documind"]
+      test: ["CMD-SHELL", "pg_isready -U knovara -d knovara"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -18,7 +18,7 @@ services:
   app:
     build: .
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://documind:documind@db:5432/documind}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://knovara:knovara@db:5432/knovara}
       DOCUMENT_STORAGE_DIR: ${DOCUMENT_STORAGE_DIR:-storage/documents}
       AI_API_KEY: ${AI_API_KEY:-}
       AI_BASE_URL: ${AI_BASE_URL:-https://api.openai.com/v1}

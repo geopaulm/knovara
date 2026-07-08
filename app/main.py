@@ -46,7 +46,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
         init_db(engine)
         yield
 
-    app = FastAPI(title="DocuMind", lifespan=lifespan)
+    app = FastAPI(title="Knovara", lifespan=lifespan)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=list(settings.cors_origins),

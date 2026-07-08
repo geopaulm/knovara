@@ -1,8 +1,8 @@
-# DocuMind — Frontend Requirements
+# Knovara — Frontend Requirements
 
 ## 1. Overview
 
-The DocuMind frontend is a simple web application that allows users to upload documents, view document processing status, and ask questions about uploaded content.
+The Knovara frontend is a simple web application that allows users to upload documents, view document processing status, and ask questions about uploaded content.
 
 The frontend should be clean, responsive, and suitable for demonstrating the project in an Upwork portfolio.
 
@@ -18,7 +18,7 @@ The frontend should be clean, responsive, and suitable for demonstrating the pro
 
 ### 3.1 Home Page
 
-The home page should briefly explain what DocuMind does.
+The home page should briefly explain what Knovara does.
 
 It should include:
 
