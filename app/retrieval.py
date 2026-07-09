@@ -55,6 +55,16 @@ def source_response(chunk: DocumentChunk) -> dict:
     }
 
 
+def search_result_response(chunk: DocumentChunk) -> dict:
+    return {
+        "id": f"chunk-{chunk.id}",
+        "title": chunk.document.filename,
+        "source": chunk.document.filename,
+        "page_number": chunk.page_number,
+        "text": chunk.text,
+    }
+
+
 def answer_question(session: Session, question: str, ai_service: AIService) -> dict:
     question_embedding = ai_service.embed([question])[0]
     chunks = retrieve_chunks(session, question_embedding)

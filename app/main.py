@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
+from secrets import compare_digest
 from shutil import copyfileobj
 from typing import Annotated
 from typing import Optional
@@ -18,11 +19,16 @@ from app.config import Settings, get_settings
 from app.db import get_db, init_db, make_engine, make_session_factory, ping_db
 from app.models import Document
 from app.processing import process_document
-from app.retrieval import answer_question
+from app.retrieval import answer_question, retrieve_chunks, search_result_response
 
 
 class ChatRequest(BaseModel):
     question: str
+
+
+class SearchRequest(BaseModel):
+    query: str
+    top_k: int = 5
 
 
 def document_response(document: Document) -> dict:
@@ -58,6 +64,18 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
 
     def db_session(request: Request):
         yield from get_db(request.app.state.SessionLocal)
+
+    def require_knovara_auth(request: Request) -> None:
+        if not settings.knovara_api_key:
+            raise HTTPException(status_code=503, detail="Knovara API key is not configured")
+
+        scheme, _, token = request.headers.get("Authorization", "").partition(" ")
+        if scheme.lower() != "bearer" or not compare_digest(token, settings.knovara_api_key):
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid Knovara API token",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
 
     @app.get("/health")
     def health(session: Annotated[Session, Depends(db_session)]):
@@ -137,6 +155,27 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
             return answer_question(session, question, request.app.state.ai_service)
         except (ValueError, httpx.HTTPError) as exc:
             raise HTTPException(status_code=503, detail="AI service unavailable") from exc
+
+    @app.post("/collections/{collection_id}/search")
+    def search_collection(
+        collection_id: str,
+        request: Request,
+        search_request: SearchRequest,
+        session: Annotated[Session, Depends(db_session)],
+    ):
+        require_knovara_auth(request)
+        query = search_request.query.strip()
+        if not query:
+            raise HTTPException(status_code=400, detail="Query is required")
+        if not 1 <= search_request.top_k <= 20:
+            raise HTTPException(status_code=400, detail="top_k must be between 1 and 20")
+
+        try:
+            query_embedding = request.app.state.ai_service.embed([query])[0]
+            chunks = retrieve_chunks(session, query_embedding, limit=search_request.top_k)
+        except (ValueError, httpx.HTTPError) as exc:
+            raise HTTPException(status_code=503, detail="AI service unavailable") from exc
+        return {"results": [search_result_response(chunk) for chunk in chunks]}
 
     return app
 

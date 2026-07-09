@@ -21,6 +21,7 @@ Set `AI_API_KEY` in `.env`. The other defaults work with Docker:
 DATABASE_URL=postgresql+psycopg://knovara:knovara@db:5432/knovara
 DOCUMENT_STORAGE_DIR=storage/documents
 AI_API_KEY=your_api_key_here
+KNOVARA_API_KEY=your_search_token_here
 AI_BASE_URL=https://api.openai.com/v1
 AI_EMBEDDING_MODEL=text-embedding-3-small
 AI_CHAT_MODEL=gpt-4o-mini
@@ -112,6 +113,17 @@ curl -X POST http://localhost:8000/api/chat \
 ```
 
 Chat responses include an `answer` and `sources` with document name, page number, and excerpt.
+
+Search a collection with the Knovara-compatible RAG endpoint:
+
+```sh
+curl -X POST http://localhost:8000/collections/main/search \
+  -H "Authorization: Bearer $KNOVARA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"query":"What does the document say about refunds?","top_k":5}'
+```
+
+Search responses include a `results` array. Result items are citation-friendly objects with document title, source, page number, and text.
 
 Delete a document:
 

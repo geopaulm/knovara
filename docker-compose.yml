@@ -21,6 +21,7 @@ services:
       DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://knovara:knovara@db:5432/knovara}
       DOCUMENT_STORAGE_DIR: ${DOCUMENT_STORAGE_DIR:-storage/documents}
       AI_API_KEY: ${AI_API_KEY:-}
+      KNOVARA_API_KEY: ${KNOVARA_API_KEY:-}
       AI_BASE_URL: ${AI_BASE_URL:-https://api.openai.com/v1}
       AI_EMBEDDING_MODEL: ${AI_EMBEDDING_MODEL:-text-embedding-3-small}
       AI_CHAT_MODEL: ${AI_CHAT_MODEL:-gpt-4o-mini}

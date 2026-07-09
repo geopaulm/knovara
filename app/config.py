@@ -15,6 +15,7 @@ class Settings:
     database_url: str
     document_storage_dir: str = DEFAULT_DOCUMENT_STORAGE_DIR
     ai_api_key: str = ""
+    knovara_api_key: str = ""
     ai_base_url: str = DEFAULT_AI_BASE_URL
     ai_embedding_model: str = DEFAULT_AI_EMBEDDING_MODEL
     ai_chat_model: str = DEFAULT_AI_CHAT_MODEL
@@ -32,6 +33,7 @@ def get_settings() -> Settings:
         database_url=os.getenv("DATABASE_URL", DEFAULT_DATABASE_URL),
         document_storage_dir=os.getenv("DOCUMENT_STORAGE_DIR", DEFAULT_DOCUMENT_STORAGE_DIR),
         ai_api_key=os.getenv("AI_API_KEY", ""),
+        knovara_api_key=os.getenv("KNOVARA_API_KEY", ""),
         ai_base_url=os.getenv("AI_BASE_URL", DEFAULT_AI_BASE_URL),
         ai_embedding_model=os.getenv("AI_EMBEDDING_MODEL", DEFAULT_AI_EMBEDDING_MODEL),
         ai_chat_model=os.getenv("AI_CHAT_MODEL", DEFAULT_AI_CHAT_MODEL),
